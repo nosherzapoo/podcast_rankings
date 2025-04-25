@@ -1,0 +1,45 @@
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# CSV data files - optional, you may want to track these
+# *.csv
+
+# Debug files
+api_response_debug.json
+
+# Podscribe files
+*Podscribe*.html
+*Podscribe*_files/ 

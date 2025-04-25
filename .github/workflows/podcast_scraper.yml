@@ -1,0 +1,68 @@
+name: Weekly Podcast Rankings Scraper
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every Sunday
+    - cron: '0 0 * * 0'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  scrape_and_email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas beautifulsoup4
+          
+      - name: Run Apple scraper
+        run: python apple_scraper.py
+      
+      - name: Run Spotify scraper
+        run: python spotify_scraper.py
+        
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        
+      - name: Email results
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Weekly Podcast Rankings Report - ${{ steps.date.outputs.date }}
+          body: |
+            Hi,
+            
+            Here are the latest podcast rankings from Apple and Spotify.
+            Data was collected on ${{ steps.date.outputs.date }}.
+            
+            Please find the CSV files attached.
+            
+            Regards,
+            Podcast Rankings Bot
+          to: ${{ secrets.EMAIL_TO }}
+          from: Podcast Rankings Bot <${{ secrets.MAIL_USERNAME }}>
+          attachments: |
+            apple_podcast_rankings_${{ steps.date.outputs.date }}.csv
+            spotify_podcast_rankings_${{ steps.date.outputs.date }}.csv
+            
+      - name: Upload CSV files as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: podcast-rankings-${{ steps.date.outputs.date }}
+          path: |
+            apple_podcast_rankings_${{ steps.date.outputs.date }}.csv
+            spotify_podcast_rankings_${{ steps.date.outputs.date }}.csv
+          retention-days: 30 
