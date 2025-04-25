@@ -51,7 +51,7 @@ jobs:
             
             Regards,
             Podcast Rankings Bot
-          to: ${{ secrets.EMAIL_TO }}
+          to: ${{ secrets.EMAIL_TO }}, ${{secrets.EMAIL_TO_2}}, ${{secrets.EMAIL_TO_3}}
           from: Podcast Rankings Bot <${{ secrets.MAIL_USERNAME }}>
           attachments: |
             apple_podcast_rankings_${{ steps.date.outputs.date }}.csv
